@@ -9,6 +9,7 @@ dependencies = [
  "actix-threadpool",
  "actix-web",
  "async-trait",
+ "chrono",
  "diesel",
  "diesel_migrations",
  "dotenv",

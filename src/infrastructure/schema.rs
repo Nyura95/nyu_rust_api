@@ -29,13 +29,13 @@ diesel::table! {
         email -> Varchar,
         username -> Varchar,
         password -> Varchar,
-        role -> Int2,
+        role_id -> Int4,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
 }
 
-diesel::joinable!(users -> user_role (role));
+diesel::joinable!(users -> user_role (role_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     service_contexts,
