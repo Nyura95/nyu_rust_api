@@ -6,11 +6,12 @@ use crate::domain::services::jwt::JwtService;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    sub: i32,
-    exp: i64,
-    refresh: bool,
+    pub sub: i32,
+    pub exp: i64,
+    pub refresh: bool,
 }
 
+#[derive(Clone)]
 pub struct JwtServiceImpl {
     secret: String,
 }

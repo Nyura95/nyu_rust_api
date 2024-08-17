@@ -38,10 +38,10 @@ impl Container {
             TodoServiceImpl { repository: todo_repository }
         );
         let user_service = Arc::new(
-            UserServiceImpl { repository: user_repository, md5_service, jwt_service }
+            UserServiceImpl { repository: user_repository, md5_service, jwt_service: jwt_service.clone()}
         );
         let service_context_service = Arc::new(
-            ServiceContextServiceImpl::new(pool.clone())
+            ServiceContextServiceImpl::new(pool.clone(), jwt_service)
         );
         Container { user_service, todo_service, service_context_service }
     }

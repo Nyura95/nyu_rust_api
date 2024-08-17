@@ -7,6 +7,7 @@ use actix_web::middleware::Logger;
 use crate::api::controllers::todo_handler::{create_todo_handler, delete_todo_handler, get_todo_handler, list_todos_handler};
 use crate::api::controllers::user_handler::{create_user_handler, delete_user_handler, get_user_handler, list_users_handler, login_user_handler};
 use crate::api::middleware::ServiceContextMaintenanceCheck;
+use crate::api::middleware_jwt::ServiceJwtCheck;
 use crate::container::Container;
 
 pub fn create_app(container: Arc<Container>) -> App<
@@ -34,6 +35,7 @@ pub fn create_app(container: Arc<Container>) -> App<
         )
         .service(
             web::scope("/users")
+                .wrap(ServiceJwtCheck)
                 .route("", web::post().to(create_user_handler))
                 .route("", web::get().to(list_users_handler))
                 .route("/{id}", web::get().to(get_user_handler))

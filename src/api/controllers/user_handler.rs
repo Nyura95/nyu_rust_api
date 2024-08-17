@@ -1,4 +1,4 @@
-use actix_web::{web, Result, HttpResponse};
+use actix_web::{web, HttpResponse, Result};
 use crate::api::dto::user::{CreateUserDTO, LoggedUserDTO, LoginUserDTO, UserDTO};
 use crate::domain::error::ApiError;
 use crate::domain::repositories::repository::ResultPaging;
@@ -32,6 +32,11 @@ pub async fn list_users_handler(
 pub async fn get_user_handler(
     user_service: web::Data<dyn UserService>, params: web::Path<i32>,
 ) -> Result<web::Json<UserDTO>, ApiError> {
+
+    // if let Some(claims) = req.extensions_mut().get::<Claims>() {
+    //     println!("{}", claims.sub);
+    // }
+
     let user = user_service.get(params.into_inner()).await?;
 
     Ok(web::Json(user.into()))

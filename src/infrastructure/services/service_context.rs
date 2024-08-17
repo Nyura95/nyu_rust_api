@@ -1,22 +1,29 @@
+use super::jwt::Claims;
 use std::sync::Arc;
 use diesel::{insert_into, update};
 use diesel::prelude::*;
 use diesel::result::Error;
+use jsonwebtoken::{TokenData, errors::Error as jwtError};
 use log::info;
 use crate::domain::models::service_context::ServiceContext;
+use crate::domain::services::jwt::JwtService;
 use crate::domain::services::service_context::ServiceContextService;
 use crate::infrastructure::databases::postgresql::DBConn;
 use crate::infrastructure::models::service_context::ServiceContextDiesel;
 
+
+
 #[derive(Clone)]
 pub struct ServiceContextServiceImpl {
-    pub pool: Arc<DBConn>
+    pub pool: Arc<DBConn>,
+    pub jwt_service: Arc<dyn JwtService>
 }
 
 impl ServiceContextServiceImpl {
-    pub fn new(db: Arc<DBConn>) -> Self {
+    pub fn new(db: Arc<DBConn>, jwt_service: Arc<dyn JwtService>) -> Self {
         ServiceContextServiceImpl {
-            pool: db
+            pool: db,
+            jwt_service: jwt_service,
         }
     }
 
@@ -48,6 +55,10 @@ impl ServiceContextServiceImpl {
 impl ServiceContextService for ServiceContextServiceImpl {
     fn get_service_context(&self) -> ServiceContext {
         self.get_service_context()
+    }
+
+    fn verify_token(&self, token: &str) -> Result<TokenData<Claims>, jwtError> {
+        return self.jwt_service.validate_token(token);
     }
 
     fn update(&self, service_context: ServiceContext) -> ServiceContext {
