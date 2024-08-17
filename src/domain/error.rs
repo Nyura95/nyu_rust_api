@@ -6,6 +6,15 @@ pub struct CommonError {
     pub code: u32,
 }
 
+impl CommonError {
+    pub fn entity_already_exist() -> Self {
+        CommonError {
+            code: 2,
+            message: String::from("entity_already_exist"),
+        }
+    }
+}
+
 impl std::fmt::Display for CommonError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Error: {}, Code: {}", self.message, self.code)

@@ -24,5 +24,6 @@ pub trait UserRepository: Send + Sync {
     async fn create(&self, new_user: &CreateUser) -> RepositoryResult<User>;
     async fn list(&self, params: UserQueryParams) -> RepositoryResult<ResultPaging<User>>;
     async fn get(&self, user_id: i32) -> RepositoryResult<User>;
+    async fn get_by_email(&self, email: String) -> RepositoryResult<User>;
     async fn delete(&self, user_id: i32) -> RepositoryResult<()>;
 }

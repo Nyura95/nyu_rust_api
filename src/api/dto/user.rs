@@ -7,7 +7,23 @@ use crate::domain::repositories::repository::ResultPaging;
 pub struct CreateUserDTO {
     pub email: String,
     pub username: String,
+    pub password: String,
     pub role_id: i32,
+}
+
+impl Into<CreateUser> for CreateUserDTO {
+    fn into(self) -> CreateUser {
+        let password = format!("{:x}", md5::compute(format!("{}:{}", self.username, self.password)));
+        
+        CreateUser {
+            username: self.username,
+            email: self.email,
+            password: password,
+            role_id: self.role_id,
+            created_at: Utc::now().naive_utc(),
+            updated_at: Utc::now().naive_utc(),
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -15,7 +31,7 @@ pub struct UserDTO {
   id: i32,
   email: String,
   username: String,
-  role_id: i32,
+  role: String,
 }
 
 impl Into<UserDTO> for User {
@@ -24,20 +40,7 @@ impl Into<UserDTO> for User {
             id: self.id,
             email: self.email,
             username: self.username,
-            role_id: self.role_id,
-        }
-    }
-}
-
-impl Into<CreateUser> for CreateUserDTO {
-    fn into(self) -> CreateUser {
-        CreateUser {
-            username: self.username,
-            email: self.email,
-            password: String::new(),
-            role_id: self.role_id,
-            created_at: Utc::now().naive_utc(),
-            updated_at: Utc::now().naive_utc(),
+            role: self.role,
         }
     }
 }
@@ -47,6 +50,7 @@ impl Into<CreateUserDTO> for CreateUser {
         CreateUserDTO {
           username: self.username,
           email: self.email,
+          password: self.password,
           role_id: self.role_id,
         }
     }

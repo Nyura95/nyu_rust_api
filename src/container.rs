@@ -8,6 +8,7 @@ use crate::infrastructure::databases::postgresql::db_pool;
 use crate::infrastructure::repositories::todo::TodoDieselRepository;
 use crate::infrastructure::repositories::user::UserDieselRepository;
 use crate::infrastructure::services::service_context::ServiceContextServiceImpl;
+use crate::infrastructure::services::md5::Md5ServiceImpl;
 use crate::services::todo::TodoServiceImpl;
 use crate::services::user::UserServiceImpl;
 
@@ -20,6 +21,9 @@ pub struct Container {
 impl Container {
     pub fn new() -> Self {
         let pool = Arc::new(db_pool());
+        let md5_service = Arc::new(
+            Md5ServiceImpl {}
+        );
         let todo_repository: Arc<dyn TodoRepository> = Arc::new(
             TodoDieselRepository::new(pool.clone())
         );
@@ -30,7 +34,7 @@ impl Container {
             TodoServiceImpl { repository: todo_repository }
         );
         let user_service = Arc::new(
-            UserServiceImpl { repository: user_repository }
+            UserServiceImpl { repository: user_repository, md5_service }
         );
         let service_context_service = Arc::new(
             ServiceContextServiceImpl::new(pool.clone())
