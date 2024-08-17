@@ -1,7 +1,52 @@
-use crate::domain::models::user::{CreateUser, User};
+use crate::domain::models::user::{CreateUser, LoggedInUser, LoginUser, User};
 use chrono::Utc;
 use serde::{Serialize, Deserialize};
 use crate::domain::repositories::repository::ResultPaging;
+
+#[derive(Deserialize, Serialize)]
+pub struct LoggedUserDTO {
+    pub email: String,
+    pub username: String,
+    pub role: String,
+    pub token: String,
+    pub refresh_token: String,
+}
+
+impl Into<LoggedUserDTO> for LoggedInUser {
+    fn into(self) -> LoggedUserDTO {
+        LoggedUserDTO {
+            email: self.email,
+            username: self.username,
+            role: self.role,
+            token: self.token,
+            refresh_token: self.refresh_token,
+        }
+    }
+}
+
+
+#[derive(Deserialize, Serialize)]
+pub struct LoginUserDTO {
+    pub email: String,
+    pub password: String,
+    pub refresh_token: String,
+}
+
+impl Into<LoginUser> for LoginUserDTO {
+    fn into(self) -> LoginUser {
+        LoginUser {
+            email: self.email,
+            password: self.password,
+            refresh_token: self.refresh_token,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct LoginDTO {
+    pub token: String,
+    pub refresh_token: String,
+}
 
 #[derive(Deserialize, Serialize)]
 pub struct CreateUserDTO {
@@ -13,12 +58,10 @@ pub struct CreateUserDTO {
 
 impl Into<CreateUser> for CreateUserDTO {
     fn into(self) -> CreateUser {
-        let password = format!("{:x}", md5::compute(format!("{}:{}", self.username, self.password)));
-        
         CreateUser {
             username: self.username,
             email: self.email,
-            password: password,
+            password: self.password,
             role_id: self.role_id,
             created_at: Utc::now().naive_utc(),
             updated_at: Utc::now().naive_utc(),

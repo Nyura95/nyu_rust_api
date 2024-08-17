@@ -28,3 +28,19 @@ pub struct CreateUser {
   pub created_at: NaiveDateTime,
   pub updated_at: NaiveDateTime,
 }
+
+#[derive(Clone)]
+pub struct LoggedInUser {
+  pub email: String,
+  pub username: String,
+  pub role: String,
+  pub token: String,
+  pub refresh_token: String,
+}
+
+#[derive(Clone)]
+pub struct LoginUser {
+  pub email: String,
+  pub password: String,
+  pub refresh_token: String,
+}

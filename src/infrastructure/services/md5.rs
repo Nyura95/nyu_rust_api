@@ -7,11 +7,11 @@ pub struct Md5ServiceImpl {
 }
 
 impl Md5Service for Md5ServiceImpl {
-  fn hash(&self, username: String, password: String) -> String {
-    return format!("{:x}", md5::compute(format!("{}:{}", username, password)));
+  fn hash(&self, email: String, password: String) -> String {
+    return format!("{:x}", md5::compute(format!("{}:{}", email, password)));
   }
 
-  fn verify(&self, username: String, password: String, md5: String) -> bool {
-    return self.hash(username, password) == md5
+  fn verify(&self, email: String, password: String, md5: String) -> bool {
+    return self.hash(email, password) == md5
   }
 }

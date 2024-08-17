@@ -1,3 +1,4 @@
+use jsonwebtoken::errors::Error;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -13,11 +14,28 @@ impl CommonError {
             message: String::from("entity_already_exist"),
         }
     }
+
+    pub fn bad_connection() -> Self {
+        CommonError {
+            code: 3,
+            message: String::from("bad_connection"),
+        }
+    }
+
 }
 
 impl std::fmt::Display for CommonError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Error: {}, Code: {}", self.message, self.code)
+    }
+}
+
+impl Into<CommonError> for Error {
+    fn into(self) -> CommonError {
+        CommonError {
+            message: self.to_string(),
+            code: 2,
+        }
     }
 }
 

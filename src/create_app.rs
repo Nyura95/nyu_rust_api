@@ -5,7 +5,7 @@ use actix_web::body::MessageBody;
 use actix_web::dev::{ServiceFactory, ServiceRequest, ServiceResponse};
 use actix_web::middleware::Logger;
 use crate::api::controllers::todo_handler::{create_todo_handler, delete_todo_handler, get_todo_handler, list_todos_handler};
-use crate::api::controllers::user_handler::{create_user_handler, delete_user_handler, get_user_handler, list_users_handler};
+use crate::api::controllers::user_handler::{create_user_handler, delete_user_handler, get_user_handler, list_users_handler, login_user_handler};
 use crate::api::middleware::ServiceContextMaintenanceCheck;
 use crate::container::Container;
 
@@ -28,6 +28,10 @@ pub fn create_app(container: Arc<Container>) -> App<
         .app_data(web::Data::from(service_context_service.clone()))
         .wrap(Logger::default())
         .wrap(ServiceContextMaintenanceCheck)
+        .service(
+            web::scope("/login")
+                .route("", web::post().to(login_user_handler))
+        )
         .service(
             web::scope("/users")
                 .route("", web::post().to(create_user_handler))
