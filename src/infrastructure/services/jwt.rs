@@ -4,9 +4,10 @@ use chrono::{Utc, Duration};
 
 use crate::domain::services::jwt::JwtService;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
     pub sub: i32,
+    pub role_id: i32,
     pub exp: i64,
     pub refresh: bool,
 }
@@ -23,11 +24,12 @@ impl JwtServiceImpl {
 }
 
 impl JwtService for JwtServiceImpl {
-    fn create_token(&self, user_id: i32, expiration: Duration, is_refresh: bool) -> Result<String, Error> {
+    fn create_token(&self, user_id: i32, role_id: i32, expiration: Duration, is_refresh: bool) -> Result<String, Error> {
         let expiration_time = Utc::now() + expiration;
         
         let claims = Claims {
             sub: user_id,
+            role_id: role_id,
             exp: expiration_time.timestamp(),
             refresh: is_refresh,
         };

@@ -38,8 +38,8 @@ impl UserService for UserServiceImpl {
             return Err(CommonError::bad_connection())
         }
 
-        let token = self.jwt_service.create_token(find_user.id, Duration::hours(1), false).map_err(|e| -> CommonError { e.into() })?;
-        let refresh_token = self.jwt_service.create_token(find_user.id, Duration::hours(1), true).map_err(|e| -> CommonError { e.into() })?;
+        let token = self.jwt_service.create_token(find_user.id, find_user.role_id, Duration::hours(1), false).map_err(|e| -> CommonError { e.into() })?;
+        let refresh_token = self.jwt_service.create_token(find_user.id, find_user.role_id, Duration::hours(1), true).map_err(|e| -> CommonError { e.into() })?;
 
         return Ok(LoggedInUser{
             email: find_user.email,

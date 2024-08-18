@@ -10,7 +10,7 @@ use crate::domain::services::jwt::JwtService;
 use crate::domain::services::service_context::ServiceContextService;
 use crate::infrastructure::databases::postgresql::DBConn;
 use crate::infrastructure::models::service_context::ServiceContextDiesel;
-
+use actix_web::{HttpMessage, HttpRequest};
 
 
 #[derive(Clone)]
@@ -53,6 +53,11 @@ impl ServiceContextServiceImpl {
 }
 
 impl ServiceContextService for ServiceContextServiceImpl {
+
+    fn get_claims(&self, request: HttpRequest) -> Option<Claims> {
+        return request.extensions_mut().get::<Claims>().cloned()
+    }
+
     fn get_service_context(&self) -> ServiceContext {
         self.get_service_context()
     }

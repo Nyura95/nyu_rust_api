@@ -9,6 +9,7 @@ use crate::api::controllers::user_handler::{create_user_handler, delete_user_han
 use crate::api::middleware::ServiceContextMaintenanceCheck;
 use crate::api::middleware_jwt::ServiceJwtCheck;
 use crate::container::Container;
+use crate::infrastructure::models::user::UserRoleFormat;
 
 pub fn create_app(container: Arc<Container>) -> App<
     impl ServiceFactory<
@@ -35,7 +36,7 @@ pub fn create_app(container: Arc<Container>) -> App<
         )
         .service(
             web::scope("/users")
-                .wrap(ServiceJwtCheck)
+                .wrap(ServiceJwtCheck::new(UserRoleFormat::Player))
                 .route("", web::post().to(create_user_handler))
                 .route("", web::get().to(list_users_handler))
                 .route("/{id}", web::get().to(get_user_handler))

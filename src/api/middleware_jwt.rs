@@ -6,9 +6,17 @@ use actix_web::{
     HttpMessage, // Ajout de cet import pour les extensions
 };
 use futures_util::future::LocalBoxFuture;
-use crate::domain::services::service_context::ServiceContextService;
+use crate::{domain::services::service_context::ServiceContextService, infrastructure::models::user::UserRoleFormat};
 
-pub struct ServiceJwtCheck;
+pub struct ServiceJwtCheck {
+    min_role_id: UserRoleFormat,
+}
+
+impl ServiceJwtCheck {
+    pub fn new(min_role_id: UserRoleFormat) -> Self {
+      Self { min_role_id }
+    }
+  }
 
 impl<S, B> Transform<S, ServiceRequest> for ServiceJwtCheck
 where
@@ -23,12 +31,16 @@ where
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(ServiceJwtCheckMiddleware { service }))
+        ready(Ok(ServiceJwtCheckMiddleware { 
+            service,
+            min_role_id: self.min_role_id.clone(),
+        }))
     }
 }
 
 pub struct ServiceJwtCheckMiddleware<S> {
     service: S,
+    min_role_id: UserRoleFormat,
 }
 
 impl<S, B> Service<ServiceRequest> for ServiceJwtCheckMiddleware<S>
@@ -54,8 +66,10 @@ where
                     let token = &auth_str[7..];
                     match service_context_service.verify_token(token) {
                         Ok(token_data) => {
-                            request.extensions_mut().insert(token_data.claims);
-                            authorize = true;
+                            request.extensions_mut().insert(token_data.claims.clone());
+                            if token_data.claims.role_id >= self.min_role_id.clone().into() {
+                                authorize = true;
+                            }
                         },
                         Err(_) => {},
                     }
@@ -69,6 +83,7 @@ where
             return Box::pin(async { Ok(ServiceResponse::new(request, response)) });
         }
 
+        println!("testt");
         let res = self.service.call(request);
         Box::pin(async move {
             // forwarded responses map to "left" body

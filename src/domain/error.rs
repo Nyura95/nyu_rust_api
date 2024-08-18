@@ -15,6 +15,13 @@ impl CommonError {
         }
     }
 
+    pub fn session_error() -> Self {
+        CommonError {
+            code: 4,
+            message: String::from("session_error"),
+        }
+    }
+
     pub fn bad_connection() -> Self {
         CommonError {
             code: 3,

@@ -4,6 +4,20 @@ use diesel::prelude::*;
 use crate::domain::models::user::{CreateUser, User, UserRole};
 use crate::infrastructure::schema::users;
 
+#[repr(i32)]
+#[derive(Clone)]
+pub enum UserRoleFormat {
+    Player = 1,
+    MJ = 2,
+    Administrator = 3,
+}
+
+impl Into<i32> for UserRoleFormat {
+    fn into(self) -> i32 {
+        self as i32
+    }
+}
+
 #[derive(Queryable)]
 pub struct UserRoleDiesel {
     pub id: i32,

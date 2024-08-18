@@ -6,7 +6,7 @@ use crate::domain::repositories::user::UserQueryParams;
 use crate::domain::services::user::UserService;
 
 pub async  fn login_user_handler(
-    user_service: web::Data<dyn UserService>, post_data: web::Json<LoginUserDTO>,
+    user_service: web::Data<dyn UserService>, post_data: web::Json<LoginUserDTO>
 ) -> Result<web::Json<LoggedUserDTO>, ApiError> {
     let logged_in_user = user_service.login(post_data.into_inner().into()).await?;
 
@@ -22,7 +22,7 @@ pub async fn create_user_handler(
 }
 
 pub async fn list_users_handler(
-    user_service: web::Data<dyn UserService>, params: web::Query<UserQueryParams>,
+    user_service: web::Data<dyn UserService>, params: web::Query<UserQueryParams>
 ) -> Result<web::Json<ResultPaging<UserDTO>>, ApiError> {
     let selection = user_service.list(params.into_inner()).await?;
     
@@ -32,11 +32,6 @@ pub async fn list_users_handler(
 pub async fn get_user_handler(
     user_service: web::Data<dyn UserService>, params: web::Path<i32>,
 ) -> Result<web::Json<UserDTO>, ApiError> {
-
-    // if let Some(claims) = req.extensions_mut().get::<Claims>() {
-    //     println!("{}", claims.sub);
-    // }
-
     let user = user_service.get(params.into_inner()).await?;
 
     Ok(web::Json(user.into()))
