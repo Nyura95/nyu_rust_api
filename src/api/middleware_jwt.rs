@@ -83,7 +83,6 @@ where
             return Box::pin(async { Ok(ServiceResponse::new(request, response)) });
         }
 
-        println!("testt");
         let res = self.service.call(request);
         Box::pin(async move {
             // forwarded responses map to "left" body
