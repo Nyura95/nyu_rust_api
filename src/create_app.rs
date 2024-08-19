@@ -36,14 +36,14 @@ pub fn create_app(container: Arc<Container>) -> App<
         )
         .service(
             web::scope("/users")
-                .wrap(ServiceJwtCheck::new(UserRoleFormat::Player))
                 .route("", web::post().to(create_user_handler))
-                .route("", web::get().to(list_users_handler))
-                .route("/{id}", web::get().to(get_user_handler))
-                .route("/{id}", web::delete().to(delete_user_handler))
+                .route("", web::get().to(list_users_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
+                .route("/{id}", web::get().to(get_user_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
+                .route("/{id}", web::delete().to(delete_user_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::Administrator))
         )
         .service(
             web::scope("/todos")
+                .wrap(ServiceJwtCheck::new(UserRoleFormat::Player))
                 .route("", web::post().to(create_todo_handler))
                 .route("", web::get().to(list_todos_handler))
                 .route("/{id}", web::get().to(get_todo_handler))
