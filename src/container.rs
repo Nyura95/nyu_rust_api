@@ -1,4 +1,7 @@
 use std::sync::Arc;
+use std::env;
+
+use crate::domain::constants::SECRET_JWT;
 use crate::domain::repositories::todo::TodoRepository;
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::services::service_context::ServiceContextService;
@@ -25,9 +28,13 @@ impl Container {
         let md5_service = Arc::new(
             Md5ServiceImpl {}
         );
+        
+        let secret = env::var(SECRET_JWT)
+            .expect(&*format!("{value} must be set", value = SECRET_JWT));
         let jwt_service = Arc::new(
-            JwtServiceImpl::new(String::from("test"))
+            JwtServiceImpl::new(secret)
         );
+
         let todo_repository: Arc<dyn TodoRepository> = Arc::new(
             TodoDieselRepository::new(pool.clone())
         );

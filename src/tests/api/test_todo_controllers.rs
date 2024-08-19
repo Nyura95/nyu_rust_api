@@ -35,8 +35,8 @@ mod test_todo_controllers{
          */
         
         {
-        let pool = Arc::new(db_pool());
-        pool.get().unwrap().run_pending_migrations(MIGRATIONS).unwrap();
+            let pool = Arc::new(db_pool());
+            pool.get().unwrap().run_pending_migrations(MIGRATIONS).unwrap();
         }
 
         let container = Arc::new(Container::new());
