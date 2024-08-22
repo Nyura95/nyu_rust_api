@@ -1,4 +1,4 @@
-# nyu_rust_api actix simple clean architecture from Cookiecutter by microsoft with more example of used
+# nyu_rust_api actix simple clean architecture from [Cookiecutter by microsoft](https://github.com/microsoft/cookiecutter-rust-actix-clean-architecture) with more example of used
 This is a reusable Rust Cookiecutter template. The project is based on Actix web in combination with Diesel ORM.
 
 Complete list of features the template provides:
