@@ -1,11 +1,12 @@
-# Cookiecutter actix simple clean architecture
+# nyu_rust_api actix simple clean architecture from Cookiecutter by microsoft with more example of used
 This is a reusable Rust Cookiecutter template. The project is based on Actix web in combination with Diesel ORM.
 
 Complete list of features the template provides:
 * Onion architecture
 * Actix Web 
+* JWT login
 * Maintenance window support
-* Diesel ORM
+* Diesel ORM (CRUD)
 * Database migrations
 * Local postgres database docker support
 * Test containers integration for testing
@@ -13,10 +14,15 @@ Complete list of features the template provides:
 ## Getting started
 To start a new project, run the following command:
 ```bash
-cookiecutter https://github.com/microsoft/cookiecutter-rust-actix-clean-architecture
+git clone https://github.com/Nyura95/nyu_rust_api.git
 ```
 This will prompt you for some information about your project. The information
 you provide will be used to populate the files in the new project directory.
+
+Go to folder
+```bash
+cd nyu_rust_api
+```
 
 You can then build the project locally.
 ```bash
@@ -26,7 +32,7 @@ cargo build
 ## Architecture 
 The application follows the Onion Architecture pattern. An article is written 
 about our experience integrating an onion architecture with actix web in combination with diesel ORM that can 
-be found [here](./docs/onion-architecture-article.md).
+be found [here](./architecture/README.md).
 
 This architecture is a design pattern that organizes the codebase of a software application into multiple layers, where the innermost layer 
 is the domain layer and the outermost layer is the application layer. Each layer depends only on the layers inside of it and not on the layers outside of it, 
@@ -80,15 +86,19 @@ have a look at the official Diesel documentation that can be found [here](https:
     ```bash
     echo DATABASE_URL=postgres://username:password@localhost/diesel_demo > .env
     ```
-3) Setup diesel before creating a migration:
+3) Add your secret jwt password to the .env file:
+    ```bash
+    echo SECRET=yoursupersecretjwtpassword >> .env
+    ```
+4) Setup diesel before creating a migration:
     ```bash
     diesel setup
     ```
-4) Create a migration with the following command:
+5) Create a migration with the following command:
     ```bash
     diesel migration generate <migration_name>
     ```
-5) Apply your migrations:
+6) Apply your migrations:
     ```bash
     diesel migration run
     ```

@@ -1,7 +1,7 @@
 use chrono::{Utc, NaiveDateTime};
 use diesel;
 use diesel::prelude::*;
-use crate::domain::models::user::{CreateUser, User, UserRole};
+use crate::domain::models::user::{CreateUser, UpdateUser, User, UserRole};
 use crate::infrastructure::schema::users;
 
 #[repr(i32)]
@@ -128,3 +128,39 @@ impl Into<User> for CreateUserDiesel {
         }
     }
 }
+
+#[derive(Queryable, AsChangeset)]
+#[diesel(table_name = users)]
+pub struct UpdateUserDiesel {
+    pub id: i32,
+    pub username: Option<String>,
+    pub password:  Option<String>,   
+    pub role_id:  Option<i32>,
+}
+
+impl From<UpdateUser> for UpdateUserDiesel {
+    fn from(t: UpdateUser) -> Self {
+        let mut update_user = UpdateUserDiesel {
+            id: t.id,
+            password: None,
+            username: None,
+            role_id: None,
+        };
+
+        if t.password != "" {
+            update_user.password = Some(t.password)
+        }
+
+        if t.username != "" {
+            update_user.username = Some(t.username)
+        }
+
+        if t.role_id != 0 {
+            update_user.role_id = Some(t.role_id)
+        }
+
+        return update_user
+    }
+}
+
+

@@ -3,12 +3,12 @@ use actix_threadpool::run;
 use async_trait::async_trait;
 use diesel::prelude::*;
 
-use crate::domain::models::user::{CreateUser, User};
+use crate::domain::models::user::{CreateUser, UpdateUser, User};
 use crate::domain::repositories::repository::{QueryParams, RepositoryResult, ResultPaging};
 use crate::domain::repositories::user::{UserQueryParams, UserRepository};
 use crate::infrastructure::error::DieselRepositoryError;
 use crate::infrastructure::databases::postgresql::DBConn;
-use crate::infrastructure::models::user::{CreateUserDiesel, UserDiesel, UserRoleDiesel};
+use crate::infrastructure::models::user::{CreateUserDiesel, UpdateUserDiesel, UserDiesel, UserRoleDiesel};
 
 pub struct UserDieselRepository {
     pub pool: Arc<DBConn>,
@@ -28,6 +28,18 @@ impl UserRepository for UserDieselRepository {
         let new_user_diesel: CreateUserDiesel = CreateUserDiesel::from(new_user.clone());
         let mut conn = self.pool.get().unwrap();
         let result: i32 = run(move || diesel::insert_into(users::table).values(new_user_diesel).returning(users::id)
+            .get_result(&mut conn))
+            .await
+            .map_err(|v| DieselRepositoryError::from(v).into_inner())?;
+        return self.get(result).await
+    }
+
+    async fn update(&self, update_user: &UpdateUser) -> RepositoryResult<User> {
+        use crate::infrastructure::schema::users;
+        let update_user_diesel: UpdateUserDiesel = UpdateUserDiesel::from(update_user.clone());
+        let mut conn = self.pool.get().unwrap();
+
+        let result: i32 = run(move || diesel::update(users::table.filter(users::id.eq(update_user_diesel.id))).set(&update_user_diesel).returning(users::id)
             .get_result(&mut conn))
             .await
             .map_err(|v| DieselRepositoryError::from(v).into_inner())?;

@@ -1,4 +1,4 @@
-use crate::domain::models::user::{CreateUser, LoggedInUser, LoginUser, User};
+use crate::domain::models::user::{CreateUser, LoggedInUser, LoginUser, UpdateUser, User};
 use chrono::Utc;
 use serde::{Serialize, Deserialize};
 use crate::domain::repositories::repository::ResultPaging;
@@ -23,7 +23,6 @@ impl Into<LoggedUserDTO> for LoggedInUser {
         }
     }
 }
-
 
 #[derive(Deserialize, Serialize)]
 pub struct LoginUserDTO {
@@ -69,12 +68,12 @@ impl Into<CreateUser> for CreateUserDTO {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserDTO {
-  id: i32,
-  email: String,
-  username: String,
-  role: String,
+  pub id: i32,
+  pub email: String,
+  pub username: String,
+  pub role: String,
 }
 
 impl Into<UserDTO> for User {
@@ -104,6 +103,36 @@ impl Into<ResultPaging<UserDTO>> for ResultPaging<User> {
         ResultPaging {
             total: self.total,
             items: self.items.into_iter().map(|user| user.into()).collect(),
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct UpdateUserDTO {
+    pub id: i32,
+    pub username: String,
+    pub password: String,
+    pub role_id: i32,
+}
+
+impl Into<UpdateUser> for UpdateUserDTO {
+    fn into(self) -> UpdateUser {
+        UpdateUser {
+            id: self.id,
+            username: self.username,
+            password: self.password,
+            role_id: self.role_id,
+        }
+    }
+}
+
+impl Into<UpdateUser> for User {
+    fn into(self) -> UpdateUser {
+        UpdateUser {
+            id: self.id,
+            username: self.username,
+            password: self.password,
+            role_id: self.role_id,
         }
     }
 }

@@ -30,6 +30,14 @@ pub struct CreateUser {
 }
 
 #[derive(Clone)]
+pub struct UpdateUser {
+  pub id: i32,
+  pub username: String,
+  pub password: String,
+  pub role_id: i32,
+}
+
+#[derive(Clone)]
 pub struct LoggedInUser {
   pub email: String,
   pub username: String,

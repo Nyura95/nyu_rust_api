@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Result};
-use crate::api::dto::user::{CreateUserDTO, LoggedUserDTO, LoginUserDTO, UserDTO};
+use crate::api::dto::user::{CreateUserDTO, LoggedUserDTO, LoginUserDTO, UpdateUserDTO, UserDTO};
 use crate::domain::error::ApiError;
 use crate::domain::repositories::repository::ResultPaging;
 use crate::domain::repositories::user::UserQueryParams;
@@ -33,6 +33,14 @@ pub async fn get_user_handler(
     user_service: web::Data<dyn UserService>, params: web::Path<i32>,
 ) -> Result<web::Json<UserDTO>, ApiError> {
     let user = user_service.get(params.into_inner()).await?;
+
+    Ok(web::Json(user.into()))
+}
+
+pub async fn update_user_handler(
+    user_service: web::Data<dyn UserService>, post_data: web::Json<UpdateUserDTO>,
+) -> Result<web::Json<UserDTO>, ApiError> {
+    let user = user_service.update(post_data.into_inner().into()).await?;
 
     Ok(web::Json(user.into()))
 }

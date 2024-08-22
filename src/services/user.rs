@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use chrono::Duration;
 
 use crate::domain::error::CommonError;
-use crate::domain::models::user::{CreateUser, LoggedInUser, LoginUser, User};
+use crate::domain::models::user::{CreateUser, LoggedInUser, LoginUser, UpdateUser, User};
 use crate::domain::repositories::repository::ResultPaging;
 use crate::domain::repositories::user::{UserQueryParams, UserRepository};
 use crate::domain::services::jwt::JwtService;
@@ -77,6 +77,13 @@ impl UserService for UserServiceImpl {
     async fn get(&self, user_id: i32) -> Result<User, CommonError> {
         self.repository
             .get(user_id)
+            .await
+            .map_err(|e| -> CommonError { e.into() })
+    }
+
+    async fn update(&self, update_user: UpdateUser) -> Result<User, CommonError> {
+        self.repository
+            .update(&update_user)
             .await
             .map_err(|e| -> CommonError { e.into() })
     }
