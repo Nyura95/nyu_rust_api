@@ -1,17 +1,9 @@
 use actix_web::{web, HttpResponse, Result};
-use crate::api::dto::user::{CreateUserDTO, LoggedUserDTO, LoginUserDTO, UpdateUserDTO, UserDTO};
+use crate::api::dto::user::{CreateUserDTO, UpdateUserDTO, UserDTO};
 use crate::domain::error::ApiError;
 use crate::domain::repositories::repository::ResultPaging;
 use crate::domain::repositories::user::UserQueryParams;
 use crate::domain::services::user::UserService;
-
-pub async  fn login_user_handler(
-    user_service: web::Data<dyn UserService>, post_data: web::Json<LoginUserDTO>
-) -> Result<web::Json<LoggedUserDTO>, ApiError> {
-    let logged_in_user = user_service.login(post_data.into_inner().into()).await?;
-
-    Ok(web::Json(logged_in_user.into()))
-}
 
 pub async fn create_user_handler(
     user_service: web::Data<dyn UserService>, post_data: web::Json<CreateUserDTO>,
