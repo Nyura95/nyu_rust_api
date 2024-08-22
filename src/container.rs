@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use std::env;
+use dotenv::dotenv;
 
 use crate::domain::constants::SECRET_JWT;
 use crate::domain::repositories::todo::TodoRepository;
@@ -24,6 +25,7 @@ pub struct Container {
 
 impl Container {
     pub fn new() -> Self {
+        dotenv().ok();
         let pool = Arc::new(db_pool());
         let md5_service = Arc::new(
             Md5ServiceImpl {}

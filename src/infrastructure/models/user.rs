@@ -18,6 +18,17 @@ impl Into<i32> for UserRoleFormat {
     }
 }
 
+impl From<i32> for UserRoleFormat {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => UserRoleFormat::Player,
+            2 => UserRoleFormat::MJ,
+            3 => UserRoleFormat::Administrator,
+            _ => UserRoleFormat::Player,
+        }
+    }
+}
+
 #[derive(Queryable)]
 pub struct UserRoleDiesel {
     pub id: i32,

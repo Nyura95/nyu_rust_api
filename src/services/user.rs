@@ -10,6 +10,7 @@ use crate::domain::repositories::user::{UserQueryParams, UserRepository};
 use crate::domain::services::jwt::JwtService;
 use crate::domain::services::md5::Md5Service;
 use crate::domain::services::user::UserService;
+use crate::infrastructure::models::user::UserRoleFormat;
 
 #[derive(Clone)]
 pub struct UserServiceImpl {
@@ -38,8 +39,8 @@ impl UserService for UserServiceImpl {
             return Err(CommonError::bad_connection())
         }
 
-        let token = self.jwt_service.create_token(find_user.id, find_user.role_id, Duration::hours(1), false).map_err(|e| -> CommonError { e.into() })?;
-        let refresh_token = self.jwt_service.create_token(find_user.id, find_user.role_id, Duration::hours(1), true).map_err(|e| -> CommonError { e.into() })?;
+        let token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id) , Duration::hours(1), false).map_err(|e| -> CommonError { e.into() })?;
+        let refresh_token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id), Duration::hours(1), true).map_err(|e| -> CommonError { e.into() })?;
 
         return Ok(LoggedInUser{
             email: find_user.email,

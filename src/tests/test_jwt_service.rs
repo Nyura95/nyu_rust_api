@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test_jwt_service{
   use chrono::{Duration, Utc};
-  use actix_clean_architecture::{domain::services::jwt::JwtService, infrastructure::services::jwt::JwtServiceImpl};
+  use actix_clean_architecture::{domain::services::jwt::JwtService, infrastructure::{models::user::UserRoleFormat, services::jwt::JwtServiceImpl}};
 
   #[test]
     fn test_create_and_validate_token() {
@@ -9,12 +9,12 @@ mod test_jwt_service{
         let jwt_service = JwtServiceImpl::new(secret.clone());
 
         let user_id = 1;
-        let role_id = 2;
+        let role_id = UserRoleFormat::MJ;
         let expiration = Duration::minutes(30);
         let is_refresh = false;
 
         // Créer un token
-        let token = jwt_service.create_token(user_id, role_id, expiration, is_refresh);
+        let token = jwt_service.create_token(user_id, role_id.clone(), expiration, is_refresh);
         assert!(token.is_ok(), "Failed to create token: {:?}", token.err());
 
         let token = token.unwrap();
@@ -25,7 +25,7 @@ mod test_jwt_service{
 
         let claims = token_data.unwrap().claims;
         assert_eq!(claims.sub, user_id);
-        assert_eq!(claims.role_id, role_id);
+        assert_eq!(claims.role_id, Into::<i32>::into(role_id));
         assert_eq!(claims.refresh, is_refresh);
         assert!(claims.exp > Utc::now().timestamp());
     }
@@ -36,7 +36,7 @@ mod test_jwt_service{
         let jwt_service = JwtServiceImpl::new(secret.clone());
 
         let user_id = 1;
-        let role_id = 2;
+        let role_id = UserRoleFormat::MJ;
         let expiration = Duration::seconds(-30); // Expiration dans le passé
         let is_refresh = false;
 
@@ -61,7 +61,7 @@ mod test_jwt_service{
         let jwt_service = JwtServiceImpl::new(secret.clone());
 
         let user_id = 1;
-        let role_id = 2;
+        let role_id = UserRoleFormat::MJ;
         let expiration = Duration::minutes(30);
         let is_refresh = false;
 

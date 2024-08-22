@@ -2,7 +2,7 @@ use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey,
 use serde::{Serialize, Deserialize};
 use chrono::{Utc, Duration};
 
-use crate::domain::services::jwt::JwtService;
+use crate::{domain::services::jwt::JwtService, infrastructure::models::user::UserRoleFormat};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
@@ -24,12 +24,12 @@ impl JwtServiceImpl {
 }
 
 impl JwtService for JwtServiceImpl {
-    fn create_token(&self, user_id: i32, role_id: i32, expiration: Duration, is_refresh: bool) -> Result<String, Error> {
+    fn create_token(&self, user_id: i32, role: UserRoleFormat, expiration: Duration, is_refresh: bool) -> Result<String, Error> {
         let expiration_time = Utc::now() + expiration;
         
         let claims = Claims {
             sub: user_id,
-            role_id: role_id,
+            role_id: role.into(),
             exp: expiration_time.timestamp(),
             refresh: is_refresh,
         };

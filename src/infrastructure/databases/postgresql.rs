@@ -13,7 +13,7 @@ pub type PostgresPool = Pool<diesel::pg::PgConnection>;
 pub type DBConn = PostgresPool;
 
 pub fn db_pool() -> DBConn {
-    dotenv().ok();
+    dotenv().ok(); // testing mandatory
     let database_url = env::var(POSTGRESQL_DB_URI)
         .expect(&*format!("{value} must be set", value = POSTGRESQL_DB_URI));
     let manager = ConnectionManager::<PgConnection>::new(database_url);

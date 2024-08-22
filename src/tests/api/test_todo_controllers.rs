@@ -2,16 +2,17 @@
 mod test_todo_controllers{
     use std::env;
     use std::sync::Arc;
-    use actix_clean_architecture::domain::constants::SECRET_JWT;
+    use dotenv::dotenv;
+    use actix_clean_architecture::domain::constants::{POSTGRESQL_DB_URI, SECRET_JWT};
     use actix_clean_architecture::domain::services::jwt::JwtService;
     use actix_clean_architecture::infrastructure::models::user::UserRoleFormat;
     use actix_clean_architecture::infrastructure::services::jwt::JwtServiceImpl;
     use actix_web::http::header::HeaderValue;
     use actix_web::test;
-    //use testcontainers::clients;
+    use testcontainers::clients;
     use serde_json;
     use chrono::Duration;
-    //use testcontainers::images::postgres;
+    use testcontainers::images::postgres;
     use actix_clean_architecture::infrastructure::databases::postgresql::db_pool;
     use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
     use serde_json::json;
@@ -27,18 +28,18 @@ mod test_todo_controllers{
         env::set_var("RUST_LOG", "debug");
         env::set_var("RUST_BACKTRACE", "1");
         env_logger::init();
+        dotenv().ok();
 
-        //let docker = clients::Cli::default();
-        //let postgres_node = docker.run(postgres::Postgres::default());
+        let docker = clients::Cli::default(); //
+        let postgres_node = docker.run(postgres::Postgres::default()); // 
 
-        /*
         
         let connection_string = &format!(
-            "postgres://postgres:postgres@127.0.0.1:{}/postgres", postgres_node.get_host_port_ipv4(5432)
-        );
+            "postgres://postgres:postgres@127.0.0.1:{}/postgres", postgres_node.get_host_port_ipv4(5432) 
+        ); //
 
-        env::set_var(POSTGRESQL_DB_URI, connection_string);
-         */
+        env::set_var(POSTGRESQL_DB_URI, connection_string); // 
+         
         
         {
             let pool = Arc::new(db_pool());
