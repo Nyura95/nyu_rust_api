@@ -180,6 +180,6 @@ building a successful Actix web and onion architecture based web application
 in Rust.
 
 ## Conclusion
-- [clean-architecture]: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
-- [hexagonal-architecture]: https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)
-- [onion-architecture]: https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/
+- [clean-architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [hexagonal-architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software))
+- [onion-architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/)
