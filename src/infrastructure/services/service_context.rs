@@ -3,8 +3,9 @@ use std::sync::Arc;
 use diesel::{insert_into, update};
 use diesel::prelude::*;
 use diesel::result::Error;
-use jsonwebtoken::{TokenData, errors::Error as jwtError};
+use jsonwebtoken::TokenData;
 use log::info;
+use crate::domain::error::CommonError;
 use crate::domain::models::service_context::ServiceContext;
 use crate::domain::services::jwt::JwtService;
 use crate::domain::services::service_context::ServiceContextService;
@@ -62,7 +63,7 @@ impl ServiceContextService for ServiceContextServiceImpl {
         self.get_service_context()
     }
 
-    fn verify_token(&self, token: &str) -> Result<TokenData<Claims>, jwtError> {
+    fn verify_token(&self, token: &str) -> Result<TokenData<Claims>, CommonError> {
         return self.jwt_service.validate_token(token);
     }
 

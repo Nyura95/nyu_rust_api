@@ -1,4 +1,3 @@
-use jsonwebtoken::errors::Error;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -37,7 +36,7 @@ impl std::fmt::Display for CommonError {
     }
 }
 
-impl Into<CommonError> for Error {
+impl Into<CommonError> for jsonwebtoken::errors::Error {
     fn into(self) -> CommonError {
         CommonError {
             message: self.to_string(),

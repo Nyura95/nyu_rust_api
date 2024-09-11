@@ -1,8 +1,8 @@
-use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey, TokenData, errors::Error};
+use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey, TokenData};
 use serde::{Serialize, Deserialize};
 use chrono::{Utc, Duration};
 
-use crate::{domain::services::jwt::JwtService, infrastructure::models::user::UserRoleFormat};
+use crate::{domain::{error::CommonError, services::jwt::JwtService}, infrastructure::models::user::UserRoleFormat};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
@@ -24,7 +24,7 @@ impl JwtServiceImpl {
 }
 
 impl JwtService for JwtServiceImpl {
-    fn create_token(&self, user_id: i32, role: UserRoleFormat, expiration: Duration, is_refresh: bool) -> Result<String, Error> {
+    fn create_token(&self, user_id: i32, role: UserRoleFormat, expiration: Duration, is_refresh: bool) -> Result<String, CommonError> {
         let expiration_time = Utc::now() + expiration;
         
         let claims = Claims {
@@ -35,13 +35,14 @@ impl JwtService for JwtServiceImpl {
         };
 
         encode(&Header::default(), &claims, &EncodingKey::from_secret(self.secret.as_ref()))
+            .map_err(|e| e.into())
     }
 
-    fn validate_token(&self, token: &str) -> Result<TokenData<Claims>, Error> {
+    fn validate_token(&self, token: &str) -> Result<TokenData<Claims>, CommonError> {
         decode::<Claims>(
             token,
             &DecodingKey::from_secret(self.secret.as_ref()),
             &Validation::default(),
-        )
+        ).map_err(|e| e.into())
     }
 }

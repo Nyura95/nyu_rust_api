@@ -68,6 +68,17 @@ mod test_todo_controllers{
         let resp = test::call_service(&app, req).await;
         assert_eq!(resp.status().is_success(), false);
 
+        // check if refresh_token works
+        let req = test::TestRequest::post().uri("/login").set_json(LoginUserDTO{
+          email: String::new(),
+          password: String::new(),
+          refresh_token: String::from(logged_user.refresh_token),
+        }).to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
+        let logged_user: LoggedUserDTO = test::read_body_json(resp).await;
+        
+        assert_eq!(logged_user.token.trim().is_empty(), false);
 
     }
 }

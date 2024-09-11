@@ -33,14 +33,22 @@ impl UserServiceImpl {
 impl UserService for UserServiceImpl {
 
     async fn login(&self, login_user: LoginUser) -> Result<LoggedInUser, CommonError> {
-        let find_user = self.repository.get_by_email(login_user.email.clone()).await.map_err(|e| -> CommonError { e.into() })?;
-
-        if !self.md5_service.verify(login_user.email, login_user.password, find_user.password) {
-            return Err(CommonError::bad_connection())
+        let find_user: User;
+        if !login_user.refresh_token.is_empty() {
+            let token = self.jwt_service.validate_token(&login_user.refresh_token)?;
+            if !token.claims.refresh {
+                return Err(CommonError::bad_connection())
+            }
+            find_user = self.repository.get(token.claims.sub).await.map_err(|e| -> CommonError { e.into() })?;
+        } else {
+            find_user = self.repository.get_by_email(login_user.email.clone()).await.map_err(|e| -> CommonError { e.into() })?;
+            if !self.md5_service.verify(login_user.email, login_user.password, find_user.password) {
+                return Err(CommonError::bad_connection())
+            }
         }
 
-        let token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id) , Duration::hours(1), false).map_err(|e| -> CommonError { e.into() })?;
-        let refresh_token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id), Duration::hours(1), true).map_err(|e| -> CommonError { e.into() })?;
+        let token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id) , Duration::hours(1), false)?;
+        let refresh_token = self.jwt_service.create_token(find_user.id, UserRoleFormat::from(find_user.role_id), Duration::hours(1), true)?;
 
         return Ok(LoggedInUser{
             email: find_user.email,
