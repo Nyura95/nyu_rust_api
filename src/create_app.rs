@@ -31,17 +31,19 @@ pub fn create_app(container: Arc<Container>) -> App<
         .app_data(web::Data::from(service_context_service.clone()))
         .wrap(Logger::default())
         .wrap(ServiceContextMaintenanceCheck)
-        .service(
-            web::scope("/login")
-                .route("", web::post().to(login_user_handler))
-        )
+        .route("/login", web::post().to(login_user_handler))
+        .route("/users", web::post().to(create_user_handler))
         .service(
             web::scope("/users")
-                .route("", web::post().to(create_user_handler))
-                .route("", web::get().to(list_users_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
-                .route("", web::put().to(update_user_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
-                .route("/{id}", web::get().to(get_user_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
-                .route("/{id}", web::delete().to(delete_user_handler)).wrap(ServiceJwtCheck::new(UserRoleFormat::Administrator))
+            .wrap(ServiceJwtCheck::new(UserRoleFormat::MJ))
+            .route("", web::get().to(list_users_handler))
+            .route("", web::put().to(update_user_handler))
+            .route("/{id}", web::get().to(get_user_handler))
+            .service(
+                web::resource("/{id}").route(
+                  web::delete().to(delete_user_handler).wrap(ServiceJwtCheck::new(UserRoleFormat::Administrator))
+                )
+              )
         )
         .service(
             web::scope("/todos")
